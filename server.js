@@ -26,7 +26,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.personal-library-api-n5yk.onrender.com || `http://localhost:${process.env.PORT || 3000}`
+        url: `process.env.personal-library-api-n5yk.onrender.com` || `http://localhost:${process.env.PORT || 3000}`
       }
     ]
   },
