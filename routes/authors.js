@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const authorsController = require('../controllers/authorsController');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 /**
  * @swagger
@@ -112,6 +113,8 @@ const authorsController = require('../controllers/authorsController');
  *         description: Invalid author data
  *       500:
  *         description: Server error
+ *       401:
+ *         description: Authentication required
  */
 
 /**
@@ -143,6 +146,8 @@ const authorsController = require('../controllers/authorsController');
  *         description: Author not found
  *       500:
  *         description: Server error
+ *       401:
+ *         description: Authentication required
  */
 
 /**
@@ -168,12 +173,29 @@ const authorsController = require('../controllers/authorsController');
  *         description: Author not found
  *       500:
  *         description: Server error
+ *       401:
+ *         description: Authentication required
  */
 
 router.get('/', authorsController.getAllAuthors);
 router.get('/:id', authorsController.getAuthorById);
-router.post('/', authorsController.createAuthor);
-router.put('/:id', authorsController.updateAuthor);
-router.delete('/:id', authorsController.deleteAuthor);
+
+router.post(
+  '/',
+  isAuthenticated,
+  authorsController.createAuthor
+);
+
+router.put(
+  '/:id',
+  isAuthenticated,
+  authorsController.updateAuthor
+);
+
+router.delete(
+  '/:id',
+  isAuthenticated,
+  authorsController.deleteAuthor
+);
 
 module.exports = router;

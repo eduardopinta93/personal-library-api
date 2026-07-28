@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const booksController = require('../controllers/booksController');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 /**
  * @swagger
@@ -128,6 +129,8 @@ const booksController = require('../controllers/booksController');
  *         description: Invalid book data
  *       500:
  *         description: Server error
+ *       401:
+ *         description: Authentication required
  */
 
 /**
@@ -159,6 +162,8 @@ const booksController = require('../controllers/booksController');
  *         description: Book not found
  *       500:
  *         description: Server error
+ *       401:
+ *         description: Authentication required
  */
 
 /**
@@ -184,12 +189,26 @@ const booksController = require('../controllers/booksController');
  *         description: Book not found
  *       500:
  *         description: Server error
+ *       401:
+ *         description: Authentication required
  */
 
 router.get('/', booksController.getAllBooks);
 router.get('/:id', booksController.getBookById);
-router.post('/', booksController.createBook);
-router.put('/:id', booksController.updateBook);
-router.delete('/:id', booksController.deleteBook);
+router.post(
+  '/',
+  isAuthenticated,
+  booksController.createBook
+);
+router.put(
+  '/:id',
+  isAuthenticated,
+  booksController.updateBook
+);
+router.delete(
+  '/:id',
+  isAuthenticated,
+  booksController.deleteBook
+);
 
 module.exports = router;

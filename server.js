@@ -10,11 +10,31 @@ const express = require('express');
 const { initDb } = require('./data/database');
 const booksRoutes = require('./routes/books');
 const authorsRoutes = require('./routes/authors');
+const session = require('express-session');
+const passport = require('./config/passport');
+const authRoutes = require('./routes/auth');
 
 const app = express();
+app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'lax'
+    }
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const swaggerOptions = {
   definition: {
@@ -25,10 +45,15 @@ const swaggerOptions = {
       description: 'API for managing books and authors in a personal library.'
     },
     servers: [
-      {
-        url: 'https://personal-library-api-n5yk.onrender.com'
-      }
-    ]
+  {
+    url: 'http://localhost:3000',
+    description: 'Local development server'
+  },
+  {
+    url: 'https://personal-library-api-n5yk.onrender.com',
+    description: 'Production server'
+  }
+]
   },
   apis: ['./routes/*.js']
 };
@@ -40,7 +65,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/', (req, res) => {
   res.send('Personal Library API is running');
 });
-
+app.use('/auth', authRoutes);
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
 
