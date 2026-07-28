@@ -45,15 +45,17 @@ const swaggerOptions = {
       description: 'API for managing books and authors in a personal library.'
     },
     servers: [
-  {
-    url: 'http://localhost:3000',
-    description: 'Local development server'
-  },
-  {
-    url: 'https://personal-library-api-n5yk.onrender.com',
-    description: 'Production server'
-  }
-]
+      {
+        url:
+          process.env.NODE_ENV === 'production'
+            ? 'https://personal-library-api-n5yk.onrender.com'
+            : 'http://localhost:3000',
+        description:
+          process.env.NODE_ENV === 'production'
+            ? 'Production Server'
+            : 'Local Development Server'
+      }
+    ]
   },
   apis: ['./routes/*.js']
 };
